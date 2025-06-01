@@ -1,7 +1,7 @@
 from src.masks import get_mask_account, get_mask_card_number
 
 
-def mask_account_card(name_card: [str]) -> [str]:
+def mask_account_card(name_card: str) -> str:
     """Функция, которая принимает один аргумент — строку, содержащую тип и номер карты или счета,
     возвращать строку с замаскированным номером"""
     if "счет" in name_card.lower():
@@ -16,11 +16,13 @@ def mask_account_card(name_card: [str]) -> [str]:
         name_bank = name_card[:-16]
         return f"{name_bank} {masked_visa}"
 
-def get_date(data_card_number: [str]) -> str:
+
+def get_date(data_card_number: str) -> str:
     '''Функция, которая принимает на вход строку с датой в одном
     и возвращает строку с датой в формате "ДД.ММ.ГГГГ"'''
     data_correct = data_card_number[8:10] + "." + data_card_number[5:7] + "." + data_card_number[:4]
     return data_correct
+
 
 if __name__ == "__main__":
     print(mask_account_card("Visa Platinum 7000792289606361"))
