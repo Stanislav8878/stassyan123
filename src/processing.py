@@ -19,7 +19,7 @@ def sort_by_date(base_idtime: list[dict], reverse: bool = False) -> list[dict]:
     return sorted(base_idtime, key=lambda x: x["date"], reverse=reverse)
 
 
-if name == "main":
+if __name__ == "__main__":
     print(
         filter_by_state(
             [
