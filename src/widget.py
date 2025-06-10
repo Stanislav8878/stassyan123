@@ -1,27 +1,42 @@
+import re
+from datetime import datetime
+
 from src.masks import get_mask_account, get_mask_card_number
 
 
-def mask_account_card(name_card: str) -> str:
-    """Функция, которая принимает один аргумент — строку, содержащую тип и номер карты или счета,
-    возвращать строку с замаскированным номером"""
-    if "счет" in name_card.lower():
+def mask_account_card(payment_info: str) -> str:
+    """Функция для маскировки номеров карт и счетов"""
+    if not payment_info.strip():
+        return ""
 
-        number_card = name_card[-20:]
+    numbers = re.findall(r"\d+", payment_info)
+    if not numbers:
+        return payment_info.strip()
 
-        masked_card = get_mask_account(number_card)
-        return f"Счет {masked_card}"
+    number = "".join(numbers)
+
+    bank_part = re.sub(r"\d+", "", payment_info).strip()
+
+    if "счет" in payment_info.lower():
+        masked = get_mask_account(number)
+        return f"{bank_part} {masked}"
     else:
-        name_card_bank = name_card[-16:]
-        masked_visa = get_mask_card_number(name_card_bank)
-        name_bank = name_card[:-16]
-        return f"{name_bank} {masked_visa}"
+        masked = get_mask_card_number(number)
+        return f"{bank_part} {masked}"
 
 
-def get_date(data_card_number: str) -> str:
-    '''Функция, которая принимает на вход строку с датой в одном
-    и возвращает строку с датой в формате "ДД.ММ.ГГГГ"'''
-    data_correct = data_card_number[8:10] + "." + data_card_number[5:7] + "." + data_card_number[:4]
-    return data_correct
+def get_date(date_str: str) -> str:
+    """Функция для форматирования даты"""
+    if not date_str.strip():
+        return ""
+
+    try:
+
+        dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
+        return dt.strftime("%d.%m.%Y")
+    except ValueError:
+
+        return date_str.strip()
 
 
 if __name__ == "__main__":
