@@ -1,30 +1,28 @@
-from typing import Union
+from mypy.types import Union
 
 
 # Запускаем функцию с аргументом
-def get_mask_card_number(card_number: str) -> str:
-    """Функция, которая принимает на вход номер карты и возвращает ее маску"""
-    if not card_number:
-        return ""
+def get_mask_card_number(card_number: Union[str]) -> str:
+    """Функция которая принимает на вход номер карты и возвращает ее маску"""
 
     card_number = card_number.replace(" ", "")
-    if len(card_number) < 8:
-        return card_number
+    masked_card_number = " ".join(card_number[i : i + 4] for i in range(0, len(card_number), 4))
+    masked_card_number_list = list(masked_card_number)
 
-    masked = card_number[:6] + "*" * (len(card_number) - 10) + card_number[-4:]
-    return " ".join([masked[i : i + 4] for i in range(0, len(masked), 4)])
+    for i in range(len(masked_card_number_list)):
+        if 7 <= i <= 13 and masked_card_number_list[i] != " ":
+            masked_card_number_list[i] = "*"
+
+    masked_card_number = "".join(masked_card_number_list)
+    return masked_card_number
 
 
-def get_mask_account(account_number: str) -> str:
+def get_mask_account(card_number: Union[str]) -> str:
     """Функция принимает на вход номер счета и возвращает его маску"""
-    if not account_number:
-        return "**"
 
-    account_number = account_number.replace(" ", "")
-    if len(account_number) < 4:
-        return f"**{account_number}"
-
-    return f"**{account_number[-4:]}"
+    card_number = card_number.replace(" ", "")
+    last_part = str(card_number[-4:])
+    return f"**{last_part}"
 
 
 if __name__ == "__main__":
