@@ -2,8 +2,10 @@ import re
 from datetime import datetime
 
 from src.masks import get_mask_account, get_mask_card_number
+from decorators import log
 
 
+@log(filename="widget_operations.log")
 def mask_account_card(payment_info: str) -> str:
     """Функция для маскировки номеров карт и счетов"""
     if not payment_info.strip():
@@ -31,11 +33,9 @@ def get_date(date_str: str) -> str:
         return ""
 
     try:
-
         dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
         return dt.strftime("%d.%m.%Y")
     except ValueError:
-
         return date_str.strip()
 
 
