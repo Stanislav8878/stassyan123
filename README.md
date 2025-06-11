@@ -100,6 +100,9 @@ poetry add --group dev pytest
     5. Папка с отчетом покрытия тестами в формате HTML находится:
 C:\Users\Stanislav\PycharmProjects\stasyan\htmlcov\index.html
 
+    6. Установка фаила в папку src:
+mypy.ini
+
 
 Использование
 
