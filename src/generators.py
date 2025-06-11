@@ -1,67 +1,41 @@
 from __future__ import annotations
 
-import datetime
-from functools import wraps
-from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar
+from typing import Any, Dict, Iterable, Iterator, TypeVar
 
 T = TypeVar("T")
 
 
-def log(filename: Optional[str] = None) -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    Декоратор для логирования вызовов функций.
-    """
-
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
-        @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> T:
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            func_name = func.__name__
-
-            try:
-                result = func(*args, **kwargs)
-                message = f"{timestamp} - {func_name} ok\n"
-                _log_message(message, filename)
-                return result
-            except Exception as e:
-                message = f"{timestamp} - {func_name} error: {type(e).__name__}. " f"Inputs: {args}, {kwargs}\n"
-                _log_message(message, filename)
-                raise
-
-        return wrapper
-
-    return decorator
-
-
-def _log_message(message: str, filename: Optional[str] = None) -> None:
-    """Внутренняя функция для логирования сообщения."""
-    if filename:
-        with open(filename, "a", encoding="utf-8") as f:
-            f.write(message)
-    else:
-        print(message, end="")
-
-
 def filter_by_currency(transactions: Iterable[Dict[str, Any]], currency: str) -> Iterator[Dict[str, Any]]:
-    """
-    Фильтрует транзакции по указанной валюте.
-    """
+    """Фильтрация транзакций по валюте с проверкой структуры."""
+    if not isinstance(currency, str) or len(currency) != 3:
+        raise ValueError("Currency code must be 3 characters long")
+
     for transaction in transactions:
-        if transaction["operationAmount"]["currency"]["code"] == currency:
-            yield transaction
+        try:
+            if transaction.get("operationAmount", {}).get("currency", {}).get("code") == currency:
+                yield transaction
+        except AttributeError:
+            continue
 
 
 def transaction_descriptions(transactions: Iterable[Dict[str, Any]]) -> Iterator[str]:
-    """
-    Генерирует описания транзакций.
-    """
+    """Генерация описаний транзакций с проверкой структуры."""
     for transaction in transactions:
-        yield transaction["description"]
+        try:
+            yield str(transaction["description"])
+        except (KeyError, TypeError):
+            yield "No description"
 
 
 def card_number_generator(start: int, end: int) -> Iterator[str]:
-    """
-    Генерирует номера карт в формате "XXXX XXXX XXXX XXXX".
-    """
+    """Генератор номеров карт с валидацией диапазона."""
+    if start < 0 or end < 0:
+        raise ValueError("Start and end must be positive")
+    if start > end:
+        raise ValueError("Start must be less than or equal to end")
+    if end > 9999999999999999:
+        raise ValueError("Card number cannot exceed 16 digits")
+
     for num in range(start, end + 1):
-        yield f"{num:016d}"[:4] + " " + f"{num:016d}"[4:8] + " " + f"{num:016d}"[8:12] + " " + f"{num:016d}"[12:16]
+        num_str = f"{num:016d}"
+        yield f"{num_str[:4]} {num_str[4:8]} {num_str[8:12]} {num_str[12:16]}"
