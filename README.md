@@ -75,6 +75,9 @@ pip install -r requirements.txt
     4. Установите pytest:
 poetry add --group dev pytest
 
+    5. Папка с отчетом покрытия тестами в формате HTML находится:
+C:\Users\Stanislav\PycharmProjects\stasyan\htmlcov\index.html
+
 
 Использование
 
