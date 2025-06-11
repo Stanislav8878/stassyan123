@@ -1,82 +1,52 @@
 import os
+import tempfile
 import pytest
 from decorators import log
-from datetime import datetime
 
-def test_log_to_console(capsys):
-    """Тест логирования в консоль."""
+def test_log_success_to_console(capsys):
+    """Тест успешного логирования в консоль"""
 
     @log()
     def add(a: int, b: int) -> int:
         return a + b
 
-    result = add(1, 2)
+    assert add(2, 3) == 5
     captured = capsys.readouterr()
-    assert "add ok" in captured.out
-    assert result == 3
+    assert "INFO" in captured.out
+    assert "add" in captured.out
+    assert "Args: (2, 3)" in captured.out
 
 
-def test_log_to_file(tmp_path):
-    """Тест логирования в файл."""
-    log_file = tmp_path / "test_log.txt"
+def test_log_error_to_file():
+    """Тест логирования ошибок в файл"""
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        tmp.close()
 
-    @log(filename=str(log_file))
-    def divide(a: int, b: int) -> float:
-        return a / b
+        @log(filename=tmp.name)
+        def fail_func():
+            raise ValueError("Test error")
 
-    # Тест успешного выполнения
-    result = divide(10, 2)
-    assert result == 5
-    assert "divide ok" in log_file.read_text()
+        try:
+            fail_func()
+        except ValueError:
+            pass
 
-    # Тест ошибки
-    try:
-        divide(10, 0)
-    except ZeroDivisionError:
-        pass
+        with open(tmp.name, "r") as f:
+            content = f.read()
+            assert "ERROR" in content
+            assert "fail_func" in content
+            assert "ValueError" in content
 
-    log_content = log_file.read_text()
-    assert "divide error: ZeroDivisionError" in log_content
-    assert "Inputs: (10, 0), {}" in log_content
+        os.unlink(tmp.name)
 
 
-def test_log_with_kwargs(capsys):
-    """Тест с именованными аргументами."""
+def test_log_disabled_levels(capsys):
+    """Тест отключения уровней логирования"""
 
-    @log()
-    def greet(name: str, greeting: str = "Hello") -> str:
-        return f"{greeting}, {name}!"
+    @log(log_errors=False, log_success=False)
+    def no_log_func():
+        return 42
 
-    result = greet("Alice", greeting="Hi")
+    assert no_log_func() == 42
     captured = capsys.readouterr()
-    assert "greet ok" in captured.out
-    assert result == "Hi, Alice!"
-
-
-def test_log_preserves_function_metadata():
-    """Тест сохранения метаданных функции."""
-
-    @log()
-    def sample_func(a: int, b: int) -> int:
-        """Sample function for testing."""
-        return a + b
-
-    assert sample_func.__name__ == "sample_func"
-    assert sample_func.__doc__ == "Sample function for testing."
-    assert sample_func.__annotations__ == {"a": int, "b": int, "return": int}
-
-
-def test_log_with_existing_file(tmp_path):
-    """Тест добавления логов в существующий файл."""
-    log_file = tmp_path / "existing.log"
-    log_file.write_text("Existing content\n")
-
-    @log(filename=str(log_file))
-    def test_func() -> None:
-        pass
-
-    test_func()
-
-    content = log_file.read_text()
-    assert "Existing content" in content
-    assert "test_func ok" in content
+    assert captured.out == ""

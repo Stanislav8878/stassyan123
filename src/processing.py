@@ -1,45 +1,29 @@
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Any, Dict, List
 
-def filter_by_state(list_inp: list, state: str = "EXECUTED") -> list[dict]:
+
+def filter_by_state(transactions: List[Dict[str, Any]], state: str = "EXECUTED") -> List[Dict[str, Any]]:
     """
-    Функция, которая принимает список словарей и опционально значение для ключа
-    state (по умолчанию 'EXECUTED'). Далее возвращает новый список словарей,
-    содержащий только те словари, у которых ключ 'state' соответствует указанному значению.
+    Улучшенная фильтрация с проверкой структуры данных
     """
-    new_list = []
-    for i in list_inp:
-        if i["state"] == state:
-            new_list.append(i)
-    return new_list
+    if not transactions or not isinstance(transactions, list):
+        return []
+
+    return [t for t in transactions if isinstance(t, dict) and t.get("state") == state]
 
 
-def sort_by_date(base_idtime: list[dict], reverse: bool = False) -> list[dict]:
+def sort_by_date(transactions: List[Dict[str, Any]], reverse: bool = False) -> List[Dict[str, Any]]:
     """
-    Функция, которая принимает список словарей и
-    возвращает новый список, отсортированный по дате
+    Улучшенная сортировка с обработкой ошибок формата даты
     """
-    return sorted(base_idtime, key=lambda x: x["date"], reverse=reverse)
 
+    def get_date(transaction: Dict[str, Any]) -> datetime:
+        date_str = transaction.get("date", "")
+        try:
+            return datetime.fromisoformat(date_str)
+        except (ValueError, TypeError):
+            return datetime.min
 
-if __name__ == "__main__":
-    print(
-        filter_by_state(
-            [
-                {"id": 41428829, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-                {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-                {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-                {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-            ]
-        )
-    )
-print(
-    sort_by_date(
-        [
-            {"id": 41428829, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
-            {"id": 939719570, "state": "EXECUTED", "date": "2018-06-30T02:08:58.425572"},
-            {"id": 594226727, "state": "CANCELED", "date": "2018-09-12T21:27:25.241689"},
-            {"id": 615064591, "state": "CANCELED", "date": "2018-10-14T08:21:33.419441"},
-        ]
-    )
-)
+    return sorted(transactions, key=get_date, reverse=reverse)

@@ -1,36 +1,44 @@
 from __future__ import annotations
 
 import datetime
+import logging
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, TypeVar
+
+T = TypeVar("T")
 
 
-def log(filename: Optional[str] = None) -> Callable:
+def log(
+    filename: Optional[str] = None, log_errors: bool = True, log_success: bool = True
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
-    Декоратор для логирования вызовов функций.
+    Улучшенный декоратор для логирования с настройками уровней логирования.
 
     Args:
-        filename: Имя файла для записи логов. Если None, логи выводятся в консоль.
-
-    Returns:
-        Декоратор для функции.
+        filename: Путь к файлу лога (None - вывод в консоль)
+        log_errors: Логировать ошибки (по умолчанию True)
+        log_success: Логировать успешные вызовы (по умолчанию True)
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Формируем сообщение для логирования
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        def wrapper(*args: Any, **kwargs: Any) -> T:
+            timestamp = datetime.datetime.now().isoformat()
             func_name = func.__name__
 
             try:
                 result = func(*args, **kwargs)
-                message = f"{timestamp} - {func_name} ok\n"
-                log_message(message, filename)
+                if log_success:
+                    message = f"{timestamp} - INFO - {func_name} - Args: {args}, Kwargs: {kwargs}\n"
+                    _log_message(message, filename)
                 return result
             except Exception as e:
-                message = f"{timestamp} - {func_name} error: {type(e).__name__}. " f"Inputs: {args}, {kwargs}\n"
-                log_message(message, filename)
+                if log_errors:
+                    message = (
+                        f"{timestamp} - ERROR - {func_name} - {type(e).__name__}: {str(e)} "
+                        f"Args: {args}, Kwargs: {kwargs}\n"
+                    )
+                    _log_message(message, filename)
                 raise
 
         return wrapper
@@ -38,16 +46,13 @@ def log(filename: Optional[str] = None) -> Callable:
     return decorator
 
 
-def log_message(message: str, filename: Optional[str] = None) -> None:
-    """
-    Записывает сообщение в файл или выводит в консоль.
-
-    Args:
-        message: Сообщение для логирования.
-        filename: Имя файла для записи. Если None, выводит в консоль.
-    """
+def _log_message(message: str, filename: Optional[str] = None) -> None:
+    """Улучшенное логирование с проверкой файла"""
     if filename:
-        with open(filename, "a", encoding="utf-8") as f:
-            f.write(message)
+        try:
+            with open(filename, "a", encoding="utf-8") as f:
+                f.write(message)
+        except IOError as e:
+            logging.error(f"Failed to write log: {str(e)}")
     else:
         print(message, end="")
