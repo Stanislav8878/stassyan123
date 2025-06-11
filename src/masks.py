@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def get_mask_card_number(card_number: str) -> str:
     """Функция которая принимает на вход номер карты и возвращает ее маску"""
     card_number = card_number.replace(" ", "")

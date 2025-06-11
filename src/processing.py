@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def filter_by_state(list_inp: list, state: str = "EXECUTED") -> list[dict]:
     """
     Функция, которая принимает список словарей и опционально значение для ключа
