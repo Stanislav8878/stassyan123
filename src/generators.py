@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 from functools import wraps
-from typing import Any, Callable, Optional, TypeVar, Iterator, Iterable, Dict
+from typing import Any, Callable, Dict, Iterable, Iterator, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -11,6 +11,7 @@ def log(filename: Optional[str] = None) -> Callable[[Callable[..., T]], Callable
     """
     Декоратор для логирования вызовов функций.
     """
+
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T:
