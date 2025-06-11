@@ -5,8 +5,16 @@ from typing import Optional
 
 
 def get_mask_card_number(card_number: Optional[str]) -> str:
-    """Маскировка номера карты с улучшенной валидацией."""
-    if not card_number or not isinstance(card_number, str):
+    """
+    Маскирует номер банковской карты в формате XXXX XX** **** XXXX.
+
+    Args:
+        card_number: Номер карты в любом формате (может содержать пробелы, дефисы)
+
+    Returns:
+        Маскированная строка или оригинал, если номер слишком короткий или некорректный
+    """
+    if not isinstance(card_number, str) or not card_number.strip():
         return ""
 
     digits = re.sub(r"\D", "", card_number)
@@ -17,7 +25,15 @@ def get_mask_card_number(card_number: Optional[str]) -> str:
 
 
 def get_mask_account(account_number: Optional[str]) -> str:
-    """Маскировка счета с улучшенной валидацией."""
+    """
+    Маскирует номер банковского счета в формате **XXXX.
+
+    Args:
+        account_number: Номер счета в любом формате
+
+    Returns:
+        Маскированная строка (последние 4 цифры) или ** для некорректных данных
+    """
     if account_number is None:
         return ""
 
@@ -29,8 +45,4 @@ def get_mask_account(account_number: Optional[str]) -> str:
         return "**"
 
     digits = re.sub(r"\D", "", cleaned)
-    if not digits:
-        return f"**{cleaned}" if cleaned else "**"
-
-    last_digits = digits[-4:] if len(digits) >= 4 else digits
-    return f"**{last_digits}"
+    return f"**{digits[-4:]}" if digits else f"**{cleaned}"
