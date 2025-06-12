@@ -18,17 +18,14 @@ def log(
     logger.setLevel(logging.INFO)
 
     # Удаляем существующие обработчики
-    for h in logger.handlers[:]:
-        logger.removeHandler(h)
+    for existing_handler in logger.handlers[:]:
+        logger.removeHandler(existing_handler)
 
-    # Создаем новый обработчик
-    if filename:
-        handler: Handler = logging.FileHandler(filename)
-    else:
-        handler: Handler = logging.StreamHandler()
-
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
-    handler.setFormatter(formatter)
+    # Создаем и настраиваем новый обработчик
+    handler = logging.FileHandler(filename) if filename else logging.StreamHandler()
+    handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+    )
     logger.addHandler(handler)
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
