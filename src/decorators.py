@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from logging import Handler
 from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
