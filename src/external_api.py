@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Dict, Optional, TypedDict, Union
+from typing import Dict, TypedDict, Union
 
 import requests
 from dotenv import load_dotenv

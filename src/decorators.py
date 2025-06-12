@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from typing import Any, Callable, Optional, TypeVar
+from logging import Handler
+from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 
 
 def log(
-    filename: Optional[str] = None, log_errors: bool = True, log_success: bool = True
+    filename: str | None = None, log_errors: bool = True, log_success: bool = True
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Декоратор для логирования вызовов функций.
@@ -16,6 +17,11 @@ def log(
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
 
+    # Удаляем существующие обработчики
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
+    handler: Handler
     if filename:
         handler = logging.FileHandler(filename)
     else:
