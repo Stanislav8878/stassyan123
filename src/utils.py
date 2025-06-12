@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List, TypedDict, Union
+from typing import Any, Dict, List, TypedDict, Union  # Добавили недостающие импорты
 
 
 class Transaction(TypedDict, total=False):
