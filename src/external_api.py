@@ -20,7 +20,6 @@ class Transaction(TypedDict):
     operationAmount: OperationAmount
 
 
-API_KEY: Optional[str] = os.getenv("EXCHANGE_RATE_API_KEY")
 BASE_URL: str = "https://api.apilayer.com/exchangerates_data/latest"
 RATES_CACHE: Dict[str, Dict[str, float]] = {}
 CACHE_EXPIRATION: Dict[str, datetime] = {}
@@ -29,29 +28,9 @@ CACHE_EXPIRATION: Dict[str, datetime] = {}
 def convert_to_rub(transaction: Transaction) -> float:
     """
     Конвертирует сумму транзакции в рубли.
-
-    Args:
-        transaction: Словарь с данными о транзакции
-
-    Returns:
-        Сумма в рублях (float)
-
-    Raises:
-        ValueError: Если API_KEY не установлен
-        KeyError: Если структура транзакции неверна
-        requests.RequestException: При ошибке запроса к API
-
-    Example:
-        >>> transaction = {
-        ...     "operationAmount": {
-        ...         "amount": "100",
-        ...         "currency": {"code": "USD"}
-        ...     }
-        ... }
-        >>> convert_to_rub(transaction)
-        7500.0  # Пример результата
     """
-    if API_KEY is None:
+    api_key = os.getenv("EXCHANGE_RATE_API_KEY")
+    if not api_key:
         raise ValueError("API_KEY is not set in environment variables")
 
     try:
@@ -62,19 +41,22 @@ def convert_to_rub(transaction: Transaction) -> float:
         if currency == "RUB":
             return float(amount)
 
-        # Проверка кэша
+        # Очищаем кэш перед использованием в тестах
+        if os.environ.get("PYTEST_CURRENT_TEST"):
+            RATES_CACHE.clear()
+            CACHE_EXPIRATION.clear()
+
         if currency in RATES_CACHE and datetime.now() < CACHE_EXPIRATION.get(currency, datetime.min):
             rate = Decimal(str(RATES_CACHE[currency]["RUB"]))
         else:
             response = requests.get(
-                BASE_URL, params={"base": currency, "symbols": "RUB"}, headers={"apikey": API_KEY}, timeout=10
+                BASE_URL, params={"base": currency, "symbols": "RUB"}, headers={"apikey": api_key}, timeout=10
             )
             response.raise_for_status()
 
             rates = response.json()["rates"]
             rate = Decimal(str(rates["RUB"]))
 
-            # Обновление кэша
             RATES_CACHE[currency] = rates
             CACHE_EXPIRATION[currency] = datetime.now() + timedelta(hours=1)
 

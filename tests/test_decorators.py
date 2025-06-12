@@ -3,8 +3,11 @@ import tempfile
 import pytest
 from decorators import log
 
+
 def test_log_success_to_console(capsys):
     """Тест успешного логирования в консоль"""
+    logger = logging.getLogger(__name__)
+    logger.handlers.clear()  # Очищаем обработчики
 
     @log()
     def add(a: int, b: int) -> int:
