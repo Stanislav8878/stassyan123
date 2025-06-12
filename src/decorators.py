@@ -18,14 +18,14 @@ def log(
     logger.setLevel(logging.INFO)
 
     # Удаляем существующие обработчики
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
+    for h in logger.handlers[:]:
+        logger.removeHandler(h)
 
-    handler: Handler
+    # Создаем новый обработчик
     if filename:
-        handler = logging.FileHandler(filename)
+        handler: Handler = logging.FileHandler(filename)
     else:
-        handler = logging.StreamHandler()
+        handler: Handler = logging.StreamHandler()
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     handler.setFormatter(formatter)
