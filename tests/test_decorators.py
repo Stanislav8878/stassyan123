@@ -1,13 +1,13 @@
 import os
 import tempfile
 import pytest
+import logging  # Добавленный импорт
 from decorators import log
-
 
 def test_log_success_to_console(capsys):
     """Тест успешного логирования в консоль"""
     logger = logging.getLogger(__name__)
-    logger.handlers.clear()  # Очищаем обработчики
+    logger.handlers.clear()
 
     @log()
     def add(a: int, b: int) -> int:
@@ -18,7 +18,6 @@ def test_log_success_to_console(capsys):
     assert "INFO" in captured.out
     assert "add" in captured.out
     assert "Args: (2, 3)" in captured.out
-
 
 def test_log_error_to_file():
     """Тест логирования ошибок в файл"""
@@ -42,10 +41,8 @@ def test_log_error_to_file():
 
         os.unlink(tmp.name)
 
-
 def test_log_disabled_levels(capsys):
     """Тест отключения уровней логирования"""
-
     @log(log_errors=False, log_success=False)
     def no_log_func():
         return 42
