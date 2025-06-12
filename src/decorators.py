@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 from functools import wraps
-from typing import Callable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 T = TypeVar("T")
 
