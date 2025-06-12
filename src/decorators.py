@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import logging
 from functools import wraps
-from typing import Any, Callable, Optional, TypeVar
+from typing import Callable, Optional, TypeVar
 
 T = TypeVar("T")
 
@@ -30,7 +30,6 @@ def log(
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T:
-            timestamp = datetime.datetime.now().isoformat()
             func_name = func.__qualname__
 
             try:
