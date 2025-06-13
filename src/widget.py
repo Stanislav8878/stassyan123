@@ -47,3 +47,4 @@ def get_date(date_str: Optional[str]) -> str:
         return dt.strftime("%d.%m.%Y")
     except ValueError:
         return cleaned_date
+

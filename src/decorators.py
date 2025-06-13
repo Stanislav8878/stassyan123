@@ -56,3 +56,4 @@ def _log_message(message: str, filename: Optional[str] = None) -> None:
             print(message)
     except Exception as e:
         print(f"Logging failed: {str(e)}")
+

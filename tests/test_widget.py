@@ -26,3 +26,4 @@ def test_mask_account_card(input_str, expected):
 ])
 def test_get_date(date_str, expected):
     assert get_date(date_str) == expected
+
