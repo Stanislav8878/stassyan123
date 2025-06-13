@@ -64,7 +64,7 @@ def get_mask_card_number(card_number: Optional[Union[str, int, Any]]) -> str:
 def get_mask_account(account_number: Optional[Union[str, int, Any]]) -> str:
     """Маскирует номер банковского счета."""
     if account_number is None:
-        logger.warning("Получен None вместо номера счета")
+        logger.error("Получен None вместо номера карты")
         return ""
 
     if not isinstance(account_number, (str, int)):
