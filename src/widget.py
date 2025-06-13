@@ -1,45 +1,50 @@
-import re
+from __future__ import annotations
+
 from datetime import datetime
+import re
+from typing import Optional
 
-from src.masks import get_mask_account, get_mask_card_number
+from decorators import log
+from masks import get_mask_account, get_mask_card_number
 
 
-def mask_account_card(payment_info: str) -> str:
-    """Функция для маскировки номеров карт и счетов"""
-    if not payment_info.strip():
+@log(filename="widget_operations.log")
+def mask_account_card(payment_info: Optional[str]) -> str:
+    """Улучшенная маскировка платежной информации."""
+    if not payment_info or not isinstance(payment_info, str):
         return ""
 
-    numbers = re.findall(r"\d+", payment_info)
+    cleaned_info = payment_info.strip()
+    if not cleaned_info:
+        return ""
+
+    numbers = re.findall(r"\d+", cleaned_info)
     if not numbers:
-        return payment_info.strip()
+        return cleaned_info
 
     number = "".join(numbers)
+    bank_part = re.sub(r"\d+", "", cleaned_info).strip()
 
-    bank_part = re.sub(r"\d+", "", payment_info).strip()
-
-    if "счет" in payment_info.lower():
+    if "счет" in cleaned_info.lower():
         masked = get_mask_account(number)
-        return f"{bank_part} {masked}"
     else:
         masked = get_mask_card_number(number)
-        return f"{bank_part} {masked}"
+
+    return f"{bank_part} {masked}" if bank_part else masked
 
 
-def get_date(date_str: str) -> str:
-    """Функция для форматирования даты"""
-    if not date_str.strip():
+def get_date(date_str: Optional[str]) -> str:
+    """Форматирование даты с улучшенной обработкой ошибок."""
+    if not date_str or not isinstance(date_str, str):
+        return ""
+
+    cleaned_date = date_str.strip()
+    if not cleaned_date:
         return ""
 
     try:
-
-        dt = datetime.strptime(date_str[:10], "%Y-%m-%d")
+        dt = datetime.strptime(cleaned_date[:10], "%Y-%m-%d")
         return dt.strftime("%d.%m.%Y")
     except ValueError:
+        return cleaned_date
 
-        return date_str.strip()
-
-
-if __name__ == "__main__":
-    print(mask_account_card("Visa Platinum 7000792289606361"))
-    print(mask_account_card("Счет 73654108430135874305"))
-    print(get_date("2024-03-11T02:26:18.671407"))
