@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import os
 from decimal import Decimal
+import os
 from typing import Any, Dict, Optional, Union
 
-import requests
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 

@@ -5,35 +5,12 @@ from typing import Any, Dict, List
 
 
 def filter_by_state(transactions: List[Dict[str, Any]], state: str = "EXECUTED") -> List[Dict[str, Any]]:
-    """
-    Фильтрует транзакции по указанному статусу.
-
-    Args:
-        transactions: Список словарей с транзакциями
-        state: Статус для фильтрации (по умолчанию 'EXECUTED')
-
-    Returns:
-        Отфильтрованный список транзакций
-    """
-    if not isinstance(transactions, list):
-        return []
-
+    """Фильтрует транзакции по указанному статусу."""
     return [t for t in transactions if isinstance(t, dict) and str(t.get("state", "")).upper() == str(state).upper()]
 
 
 def sort_by_date(transactions: List[Dict[str, Any]], reverse: bool = True) -> List[Dict[str, Any]]:
-    """
-    Сортирует транзакции по дате.
-
-    Args:
-        transactions: Список словарей с транзакциями
-        reverse: Порядок сортировки (True - новые сначала, False - старые сначала)
-
-    Returns:
-        Отсортированный список транзакций
-    """
-    if not isinstance(transactions, list):
-        return []
+    """Сортирует транзакции по дате."""
 
     def get_date(item: Dict[str, Any]) -> datetime:
         """Вспомогательная функция для извлечения даты."""
