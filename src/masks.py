@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import logging
@@ -17,7 +18,10 @@ def setup_logger() -> logging.Logger:
     logger = logging.getLogger("masks")
     logger.setLevel(logging.DEBUG)
 
-    handler = logging.FileHandler("logs/masks.log", mode="w")
+    # Очистка предыдущих обработчиков
+    logger.handlers = []
+
+    handler = logging.FileHandler("logs/masks.log", mode="w", encoding="utf-8")
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
 
