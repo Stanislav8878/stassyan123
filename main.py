@@ -1,5 +1,10 @@
-from src.masks import get_mask_account, get_mask_card_number
+from pathlib import Path
+from file_handlers import read_csv_file, read_excel_file
 
-print(get_mask_card_number("1234567812345678"))
+# Чтение CSV
+csv_transactions = read_csv_file(Path("transactions.csv"))
+print("CSV Transactions:", csv_transactions)
 
-print(get_mask_account("123456"))
+# Чтение Excel
+excel_transactions = read_excel_file(Path("transactions_excel.xlsx"))
+print("Excel Transactions:", excel_transactions)
