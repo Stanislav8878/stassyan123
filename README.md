@@ -84,6 +84,23 @@ def process_data(data: list) -> None:
 - Фильтрации и сортировки
 - Маскировки чувствительных данных.
 
+## Новая функциональность
+
+Добавлена возможность чтения финансовых операций из CSV и Excel файлов.
+
+### Функции:
+
+1. `read_csv_file(file_path: Path | str) -> List[Dict[str, Any]]` - читает транзакции из CSV-файла
+2. `read_excel_file(file_path: Path | str) -> List[Dict[str, Any]]` - читает транзакции из Excel-файла
+
+### Пример использования:
+
+### python
+from src.file_handlers import read_csv_file, read_excel_file
+
+csv_transactions = read_csv_file("transactions.csv")
+excel_transactions = read_excel_file("transactions_excel.xlsx")
+
 
 Установка компонентов
 
