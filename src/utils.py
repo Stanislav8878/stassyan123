@@ -61,4 +61,3 @@ def read_json_file(file_path: Union[str, Path]) -> List[Transaction]:
     except Exception as e:
         logger.error(f"Неожиданная ошибка при чтении {file_path}. Ошибка: {str(e)}")
         return []
-

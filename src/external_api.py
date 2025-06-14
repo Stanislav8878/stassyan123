@@ -47,4 +47,3 @@ def convert_to_rub(transaction: Dict[str, Any]) -> Optional[float]:
     except (KeyError, ValueError, requests.RequestException) as e:
         print(f"Error converting currency: {e}")
         return None
-

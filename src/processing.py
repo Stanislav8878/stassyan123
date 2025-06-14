@@ -21,4 +21,3 @@ def sort_by_date(transactions: List[Dict[str, Any]], reverse: bool = True) -> Li
             return datetime.min
 
     return sorted([t for t in transactions if isinstance(t, dict)], key=get_date, reverse=reverse)
-

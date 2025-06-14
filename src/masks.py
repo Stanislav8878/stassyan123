@@ -87,5 +87,3 @@ def get_mask_account(account_number: Optional[Union[str, int, Any]]) -> str:
         return f"**{digits}"
 
     return f"**{digits[-MIN_ACCOUNT_DIGITS:]}"
-
-
