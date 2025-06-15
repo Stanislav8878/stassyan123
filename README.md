@@ -97,9 +97,24 @@ def process_data(data: list) -> None:
 
 ### python
 from src.file_handlers import read_csv_file, read_excel_file
-
 csv_transactions = read_csv_file("transactions.csv")
 excel_transactions = read_excel_file("transactions_excel.xlsx")
+
+
+## Новые функции
+
+### Поиск по описанию транзакций
+
+Реализована функция `search_by_description`, которая ищет транзакции по строке в описании с использованием регулярных выражений.
+
+### python
+def search_by_description(transactions: List[Dict[str, Any]], search_string: str) -> List[Dict[str, Any]]:
+    """
+    Ищет транзакции по строке в описании с использованием регулярных выражений.
+    Поддерживает регистронезависимый поиск и регулярные выражения.
+
+
+    """
 
 
 Установка компонентов
